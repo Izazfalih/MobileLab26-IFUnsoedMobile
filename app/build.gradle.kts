@@ -4,13 +4,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.jualan"
+    namespace = "com.pemmob.izazfalih"
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
-        applicationId = "com.example.jualan"
+        applicationId = "com.pemmob.izazfalih"
         minSdk = 24
         targetSdk = 37
         versionCode = 1
@@ -44,6 +44,11 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation("androidx.compose.material:material-icons-extended")
+
+    implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.navigation.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
