@@ -1,0 +1,32 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+    <!-- Background Circle with border -->
+    <path
+        android:fillColor="#3AA34B"
+        android:pathData="M100,100m-90,0a90,90 0,1 1,180 0a90,90 0,1 1,-180 0"/>
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4"
+        android:pathData="M100,100m-80,0a80,80 0,1 1,160 0a80,80 0,1 1,-160 0"/>
+    <!-- Leaf/Plant symbol -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M100,50 C120,65 140,85 140,110 C140,132 122,150 100,150 C78,150 60,132 60,110 C60,85 80,65 100,50 Z"/>
+    <path
+        android:fillColor="#3AA34B"
+        android:pathData="M100,65 C115,77 128,95 128,112 C128,127 115,138 100,138 C85,138 72,127 72,112 C72,95 85,77 100,65 Z"/>
+    <!-- Sprout / Stem -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M97,80 L103,80 L103,130 L97,130 Z"/>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M100,95 C115,90 120,78 120,78 C120,78 112,96 100,102 Z"/>
+    <!-- Small basket / base -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M85,120 L115,120 L110,135 L90,135 Z"/>
+</vector>
