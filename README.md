@@ -108,3 +108,61 @@ Pada pertemuan ketiga dipelajari konsep *Dynamic Lists* dan *Lazy Layouts* pada 
 #### 4. HomeActivity & Konfigurasi Manifest
 - **`HomeActivity.kt`**: Dibuat sebagai Activity utama yang langsung memanggil `DaftarProdukScreen()`.
 - **`AndroidManifest.xml`**: Disesuaikan dengan menjadikan `HomeActivity` sebagai launcher activity utama aplikasi.
+
+---
+
+# Pertemuan 4
+## Recomposition dan UI Lifecycle
+
+### Deskripsi
+Pada pertemuan keempat dipelajari konsep lanjutan dari Jetpack Compose meliputi pengelolaan State, Recomposition, State Hoisting (pemisahan Stateful dan Stateless Composable), Unidirectional Data Flow (UDF), simulasi proses asinkronus (Coroutine & `LaunchedEffect`), validasi form kompleks, dan integrasi navigasi berargumen.
+
+### Materi
+- Recomposition & UI Lifecycle
+- State Hoisting & Unidirectional Data Flow (UDF)
+- Asynchronous Processing dengan `LaunchedEffect` & `delay`
+- Form Interaktif Kompleks (`OutlinedTextField`, `ExposedDropdownMenuBox`, `Checkbox`, `PhotoPicker`)
+- Validasi Input & Dynamic Button State (`enabled`)
+- Visual Feedback (Indikator Loading `CircularProgressIndicator` & Pesan `Toast`)
+- Navigasi Berargumen (`detail/{productId}`) dengan `NavType.IntType`
+- Action Menu di `TopAppBar` (`DropdownMenu` menuju halaman Hubungi Kami)
+- Deklarasi Permission Galeri / Penyimpanan di `AndroidManifest.xml`
+
+### Implementasi
+
+#### 1. Modifikasi Permissions (`AndroidManifest.xml`)
+Menambahkan perizinan akses media galeri untuk fitur unggah gambar:
+- `android.permission.READ_EXTERNAL_STORAGE` (maxSdkVersion 32)
+- `android.permission.READ_MEDIA_IMAGES`
+
+#### 2. Modifikasi Form Hubungi Kami (`HubungiKamiScreen.kt`)
+- **Stateful `HubungiKamiScreen`**: Mengelola state lokal (`emailText`, `messageText`, `problemType`, `isAgreed`, `imageUri`), mengevaluasi validasi input secara real-time (`isEmailValid`, `isMessageValid`, `isFormValid`), dan menangani pengiriman pesan dengan `SnackbarHost`.
+- **Stateless `StatelessFormHubungiKami`**:
+  - Kolom input Email dengan validasi format email (`isError` & `supportingText`).
+  - Dropdown menu tipe pesan menggunakan `ExposedDropdownMenuBox` (*Pertanyaan*, *Keluhan*, *Saran*).
+  - Kolom input Pesan dengan validasi minimal 10 karakter.
+  - Fitur unggah bukti gambar menggunakan `rememberLauncherForActivityResult` (`ActivityResultContracts.PickVisualMedia`).
+  - Kartu konfirmasi nama berkas terpilih secara kondisional (`imageUri != null`).
+  - Checkbox persetujuan syarat & ketentuan.
+  - Tombol Kirim Pesan dengan status dinamis (`enabled = isFormValid`).
+
+#### 3. Modifikasi Daftar Produk (`DaftarProductScreen.kt`)
+- Menambahkan kolom pencarian produk (`OutlinedTextField`) yang responsif.
+- Mengimplementasikan proses asinkronus dengan `LaunchedEffect` dan `delay(1000)` untuk menyaring data berdasarkan kategori dan kata kunci pencarian.
+- Menampilkan animasi `CircularProgressIndicator` saat loading, atau pesan "Produk tidak ditemukan" jika hasil kosong.
+- Mengadopsi pola State Hoisting dengan fungsi `StatelessDaftarProduct`.
+- Menambahkan menu aksi tiga titik (`MoreVert`) pada `TopAppBar` yang memunculkan `DropdownMenu` untuk navigasi ke halaman Hubungi Kami.
+
+#### 4. Layar Detail Produk (`DetailProductScreen.kt`)
+- **Stateful `DetailProductScreen`**: Menerima parameter `productId`, melakukan simulasi pemuatan data produk dari server dengan `LaunchedEffect`, serta mengelola jumlah pembelian (`quantity`).
+- **Stateless `StatelessDetailProduct`**:
+  - `TopAppBar` dengan tombol kembali (`popBackStack()`).
+  - Tampilan gambar produk, nama produk, harga, deskripsi, dan sisa stok.
+  - Tombol pengatur kuantitas pembelian (`FilledTonalButton` `+` dan `-`) yang dibatasi sesuai batas stok.
+  - Tombol "Tambah ke Keranjang" yang memunculkan konfirmasi `Toast`.
+
+#### 5. Navigasi Terpadu (`HomeActivity.kt`)
+Mengonfigurasi rute navigasi aplikasi:
+- `"daftar_produk"`: Halaman utama katalog produk.
+- `"detail/{productId}"`: Halaman rincian produk berdasarkan ID yang dikirim.
+- `"hubungi_kami"`: Halaman formulir layanan bantuan & kontak.
