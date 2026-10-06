@@ -1,102 +1,130 @@
 # GempaKu 🌍
 
-Aplikasi Android modern untuk menampilkan informasi gempa bumi terkini di Indonesia secara dinamis, mengonsumsi data resmi dari **BMKG REST API**. Dibangun menggunakan **Kotlin**, **Jetpack Compose**, **Material Design 3**, dan arsitektur **MVVM**.
+Aplikasi Android untuk menampilkan informasi gempa bumi terkini di Indonesia secara dinamis dari **BMKG REST API**. Dibangun menggunakan **Kotlin**, **Jetpack Compose**, **Material Design 3**, dan arsitektur **MVVM**.
 
 Proyek ini dibuat untuk memenuhi tugas **Responsi / Ujian Praktikum Pemrograman Mobile**.
 
 ---
 
-## 📱 Fitur Utama
+## 📸 Screenshots Aplikasi
 
-1. **Informasi Gempa Terkini**: Menampilkan daftar 15 gempa bumi terbaru berkekuatan M 5.0+ secara dinamis dari server BMKG.
-2. **Arsitektur MVVM**: Pemisahan tanggung jawab yang jelas antara UI, ViewModel, Repository, dan Remote Data Source. Tidak ada pemanggilan API langsung dari Composable.
-3. **Pencarian Lokal (Filter Wilayah)**: Fitur pencarian instan berdasarkan **Wilayah** (case-insensitive) yang memfilter data di memori tanpa memanggil ulang API BMKG.
-4. **State-Driven UI dengan StateFlow**:
-   - `UiState.Loading`: Menampilkan indikator loading saat mengambil data.
-   - `UiState.Success`: Menampilkan daftar gempa dengan `LazyColumn`.
-   - `UiState.Error`: Menampilkan pesan error dan tombol **Retry** jika koneksi gagal.
-5. **Navigasi Bersih (Navigation Compose)**:
-   - **Home Screen**: Menampilkan TopAppBar "GempaKu", bar pencarian, dan daftar kartu gempa (`LazyColumn`).
-   - **Detail Screen**: Menampilkan 7 informasi lengkap gempa beserta tombol navigasi kembali (Back).
-6. **7 Data Lengkap Gempa di Detail Screen**:
+Berikut adalah tangkapan layar 2 layar aplikasi (*Home Screen* dan *Detail Screen*):
+
+| Home Screen (Layar Utama) | Detail Screen (Layar Rincian) |
+| :---: | :---: |
+| <img src="screenshots/home_screen.png" width="280" alt="Home Screen GempaKu"/> | <img src="screenshots/detail_screen.png" width="280" alt="Detail Screen GempaKu"/> |
+| *TopAppBar, SearchBar, dan LazyColumn Data BMKG* | *Informasi Lengkap 7 Parameter & Back Button* |
+
+---
+
+## 📱 Fitur Aplikasi
+
+1. **Daftar Gempa Terkini**: Menampilkan 15 gempa bumi terkini (M ≥ 5.0) dari BMKG menggunakan `LazyColumn` (tanpa `RecyclerView`, `Grid`, atau `LazyRow`).
+2. **Pencarian Lokal Berdasarkan Wilayah**: Filter instan berdasarkan kata kunci wilayah (contoh: *"Jawa"*, *"Maluku"*, *"Aceh"*) secara *case-insensitive* pada data yang sudah diunduh di memori tanpa memanggil ulang API BMKG.
+3. **Penanganan State Reaktif (`UiState`)**:
+   - **Loading State**: Menampilkan `CircularProgressIndicator` dan teks `"Loading earthquake data..."`.
+   - **Success State**: Menampilkan daftar gempa atau pesan kosong jika wilayah tidak ditemukan.
+   - **Error State**: Menampilkan pesan `"Failed to load earthquake data."` disertai tombol **Retry** untuk memuat ulang jika koneksi terputus.
+4. **Navigasi Layar (Navigation Compose)**:
+   - Terdiri dari maksimal 2 layar (`Home` dan `Detail`).
+   - Setiap kartu gempa dapat diklik untuk berpindah ke layar Detail.
+   - Layar Detail dilengkapi tombol kembali (*Back button*) untuk kembali ke Home.
+5. **Detail Informasi Gempa Lengkap**:
+   Menampilkan 7 atribut data sesuai ketentuan:
    - Tanggal
    - Jam
-   - Koordinat
+   - Koordinat (*Coordinates*)
    - Magnitude
    - Kedalaman
    - Wilayah
-   - Potensi (status potensi tsunami)
-7. **Material Design 3 Theme**:
-   - Skema warna kustom (*Deep Navy Blue* & *Alert Red Accent*).
-   - Mendukung penuh **Light Mode** dan **Dark Mode** otomatis.
+   - Potensi (*Potensi Tsunami*)
+6. **Material Design 3 Theme**:
+   - Palet warna kustom (*Navy Blue Primary* `#1B3B6F` & *Alert Red Accent* `#BA1A1A`).
+   - Mendukung penuh **Light Mode** dan **Dark Mode** secara dinamis.
    - Override tipografi Material 3 di `Type.kt`.
 
 ---
 
-## 🛠️ Teknologi & Library
+## 🏛️ Arsitektur Aplikasi (MVVM)
 
-- **Bahasa**: Kotlin
-- **UI Toolkit**: Jetpack Compose & Material Design 3
-- **Networking**: Retrofit 2 (`com.squareup.retrofit2:retrofit`)
-- **JSON Converter**: Gson Converter (`com.squareup.retrofit2:converter-gson`)
-- **Navigasi**: Navigation Compose (`androidx.navigation:navigation-compose`)
-- **State Management**: StateFlow & ViewModel Compose (`androidx.lifecycle:lifecycle-viewmodel-compose`)
-- **Izin**: `android.permission.INTERNET` di `AndroidManifest.xml`
+Aplikasi mengikuti kaidah arsitektur **MVVM (Model - View - ViewModel)** murni:
+
+```
+[ Composable / UI ]
+  HomeScreen.kt & DetailScreen.kt
+       │          ▲
+       │          │ (Mengamati StateFlow: uiState, searchQuery)
+       ▼          │
+[ ViewModel ]
+  EarthquakeViewModel.kt
+       │          ▲
+       │          │ (Memanggil suspend function dalam viewModelScope)
+       ▼          │
+[ Repository ]
+  EarthquakeRepository.kt
+       │          ▲
+       │          │ (Single Source of Truth)
+       ▼          │
+[ Remote Data Source ]
+  RetrofitInstance.kt & BmkgApiService.kt
+       │          ▲
+       │          │ (HTTP GET Request / JSON Response)
+       ▼          │
+[ BMKG REST API ]
+  https://data.bmkg.go.id/DataMKG/TEWS/gempaterkini.json
+```
+
+- **Separasi Tugas**: Composable **tidak pernah** memanggil API secara langsung. Composable hanya bertugas me-render UI berdasarkan `StateFlow` dan meneruskan event pengguna ke ViewModel.
+- **Repository**: Berperan sebagai jembatan yang mengabstraksi sumber data ke ViewModel.
 
 ---
 
-## 🌐 BMKG REST API
+## 🌐 Spesifikasi REST API BMKG
 
+- **Penyedia**: Badan Meteorologi, Klimatologi, dan Geofisika (BMKG)
+- **Autentikasi**: Publik (Tanpa API Key)
 - **Base URL**: `https://data.bmkg.go.id/`
 - **Endpoint**: `DataMKG/TEWS/gempaterkini.json`
 - **Full URL**: `https://data.bmkg.go.id/DataMKG/TEWS/gempaterkini.json`
-- **Autentikasi**: Tanpa API Key
+- **Struktur JSON Response**:
+  ```
+  Infogempa
+      └── gempa[] (Array of Earthquake objects)
+  ```
+- **Pemetaan Model**:
+  Model data di `Earthquake.kt` menggunakan anotasi `@SerializedName` dari Google Gson untuk memetakan key JSON (`Tanggal`, `Jam`, `Coordinates`, `Magnitude`, `Kedalaman`, `Wilayah`, `Potensi`).
 
 ---
 
-## 🏗️ Struktur Proyek
+## ⚙️ Detail Teknis & Dependensi
 
-```
-com.example.gempaku
-│
-├── data
-│   ├── model
-│   │   └── Earthquake.kt              // Data class & pemetaan JSON Gson
-│   │
-│   ├── remote
-│   │   ├── BmkgApiService.kt          // Interface endpoint Retrofit
-│   │   └── RetrofitInstance.kt        // Singleton Retrofit client
-│   │
-│   └── repository
-│       └── EarthquakeRepository.kt    // Repository layer penghubung API & ViewModel
-│
-├── ui
-│   ├── screen
-│   │   ├── HomeScreen.kt              // Layar utama: Search bar & LazyColumn
-│   │   └── DetailScreen.kt            // Layar detail: 7 informasi lengkap & Back button
-│   │
-│   ├── viewmodel
-│   │   └── EarthquakeViewModel.kt     // ViewModel mengelola StateFlow & filter pencarian
-│   │
-│   ├── UiState.kt                     // Sealed interface: Loading, Success, Error
-│   │
-│   └── theme
-│       ├── Color.kt                   // Definisi palet warna kustom
-│       ├── Theme.kt                   // Konfigurasi Material 3 Light & Dark Theme
-│       └── Type.kt                    // Override tipografi Material 3
-│
-└── MainActivity.kt                    // Entry point & NavHost Navigation Compose
-```
+Proyek menggunakan dependensi minimal sesuai batasan instruksi tugas (tanpa Room, tanpa Hilt/Koin, tanpa Coil/Glide, tanpa library gambar pihak ketiga):
+
+| Library | Versi | Kegunaan |
+|---|---|---|
+| `androidx.compose.material3:material3` | BOM-managed | Komponen Material Design 3 UI |
+| `androidx.navigation:navigation-compose` | 2.9.3 | Navigasi deklaratif antar Composable |
+| `androidx.lifecycle:lifecycle-viewmodel-compose` | 2.8.7 | Integrasi ViewModel lifecycle di Compose |
+| `com.squareup.retrofit2:retrofit` | 2.11.0 | HTTP Client untuk konsumsi REST API |
+| `com.squareup.retrofit2:converter-gson` | 2.11.0 | Deserialisasi JSON BMKG ke objek Kotlin |
+| `com.google.code.gson:gson` | 2.11.0 | Google JSON serialization/deserialization |
+| `androidx.compose.material:material-icons-extended` | BOM-managed | Icon Material 3 (Search, Clear, Back, Refresh) |
+
+- **Izin Akses Jaringan**: Dideklarasikan di `AndroidManifest.xml`:
+  ```xml
+  <uses-permission android:name="android.permission.INTERNET" />
+  ```
 
 ---
 
-## 🚀 Cara Menjalankan
+## 📦 File APK Debug
 
-1. Clone repositori ini:
-   ```bash
-   git clone https://github.com/Izazfalih/prakmobile-responsi1.git
-   ```
-2. Buka folder proyek di **Android Studio**.
-3. Tunggu proses **Gradle Sync** selesai.
-4. Hubungkan perangkat Android fisik atau jalankan emulator.
-5. Klik tombol **Run (▶)** di Android Studio.
+File APK siap pasang (*debug build*) tersedia di repositori:
+- **Lokasi file**: [apk/GempaKu-debug.apk](apk/GempaKu-debug.apk)
+
+---
+
+## 🎥 Video Penjelasan Kode
+
+- **Link Video**: *[Masukkan Link YouTube Video Anda di Sini]*  
+  *(Video penjelasan kode fokus membahas arsitektur MVVM, Retrofit, StateFlow, dan Composable)*
