@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.gempaku.EarthquakeViewModelTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-06T18:27:25.367Z" hostname="Izaz-Falih-MacBook-Pro" time="0.061">
+  <properties/>
+  <testcase name="testSearchFilteringByWilayah" classname="com.example.gempaku.EarthquakeViewModelTest" time="0.057"/>
+  <testcase name="testFetchEarthquakesError" classname="com.example.gempaku.EarthquakeViewModelTest" time="0.001"/>
+  <testcase name="testSelectEarthquake" classname="com.example.gempaku.EarthquakeViewModelTest" time="0.001"/>
+  <testcase name="testFetchEarthquakesSuccess" classname="com.example.gempaku.EarthquakeViewModelTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
