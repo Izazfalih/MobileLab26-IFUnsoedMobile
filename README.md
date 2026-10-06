@@ -1,4 +1,4 @@
-# GempaKu 🌍
+# GempaKu
 
 Aplikasi Android untuk menampilkan informasi gempa bumi terkini di Indonesia secara dinamis dari **BMKG REST API**. Dibangun menggunakan **Kotlin**, **Jetpack Compose**, **Material Design 3**, dan arsitektur **MVVM**.
 
@@ -6,7 +6,7 @@ Proyek ini dibuat untuk memenuhi tugas **Responsi / Ujian Praktikum Pemrograman 
 
 ---
 
-## 📸 Screenshots Aplikasi
+## Screenshots Aplikasi
 
 Berikut adalah tangkapan layar 2 layar aplikasi (*Home Screen* dan *Detail Screen*):
 
@@ -17,7 +17,7 @@ Berikut adalah tangkapan layar 2 layar aplikasi (*Home Screen* dan *Detail Scree
 
 ---
 
-## 📱 Fitur Aplikasi
+## Fitur Aplikasi
 
 1. **Daftar Gempa Terkini**: Menampilkan 15 gempa bumi terkini (M ≥ 5.0) dari BMKG menggunakan `LazyColumn` (tanpa `RecyclerView`, `Grid`, atau `LazyRow`).
 2. **Pencarian Lokal Berdasarkan Wilayah**: Filter instan berdasarkan kata kunci wilayah (contoh: *"Jawa"*, *"Maluku"*, *"Aceh"*) secara *case-insensitive* pada data yang sudah diunduh di memori tanpa memanggil ulang API BMKG.
@@ -45,7 +45,7 @@ Berikut adalah tangkapan layar 2 layar aplikasi (*Home Screen* dan *Detail Scree
 
 ---
 
-## 🏛️ Arsitektur Aplikasi (MVVM)
+## Arsitektur Aplikasi (MVVM)
 
 Aplikasi mengikuti kaidah arsitektur **MVVM (Model - View - ViewModel)** murni:
 
@@ -79,7 +79,7 @@ Aplikasi mengikuti kaidah arsitektur **MVVM (Model - View - ViewModel)** murni:
 
 ---
 
-## 🌐 Spesifikasi REST API BMKG
+## Spesifikasi REST API BMKG
 
 - **Penyedia**: Badan Meteorologi, Klimatologi, dan Geofisika (BMKG)
 - **Autentikasi**: Publik (Tanpa API Key)
@@ -96,7 +96,7 @@ Aplikasi mengikuti kaidah arsitektur **MVVM (Model - View - ViewModel)** murni:
 
 ---
 
-## ⚙️ Detail Teknis & Dependensi
+## Detail Teknis & Dependensi
 
 Proyek menggunakan dependensi minimal sesuai batasan instruksi tugas (tanpa Room, tanpa Hilt/Koin, tanpa Coil/Glide, tanpa library gambar pihak ketiga):
 
@@ -117,14 +117,14 @@ Proyek menggunakan dependensi minimal sesuai batasan instruksi tugas (tanpa Room
 
 ---
 
-## 📦 File APK Debug
+## File APK Debug
 
 File APK siap pasang (*debug build*) tersedia di repositori:
 - **Lokasi file**: [apk/GempaKu-debug.apk](apk/GempaKu-debug.apk)
 
 ---
 
-## 🎥 Video Penjelasan Kode
+## Video Penjelasan Kode
 
 - **Link Video**: *[Masukkan Link YouTube Video Anda di Sini]*  
   *(Video penjelasan kode fokus membahas arsitektur MVVM, Retrofit, StateFlow, dan Composable)*
