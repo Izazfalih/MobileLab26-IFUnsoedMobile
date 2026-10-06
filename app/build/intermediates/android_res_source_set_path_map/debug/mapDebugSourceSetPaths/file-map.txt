@@ -1,8 +1,0 @@
-com.example.gempaku.app-pngs-0 /Users/izazfalih/AndroidStudioProjects/mygempa/app/build/generated/res/pngs/debug
-com.example.gempaku.app-updated_navigation_xml-1 /Users/izazfalih/AndroidStudioProjects/mygempa/app/build/generated/updated_navigation_xml/debug
-com.example.gempaku.app-packageDebugResources-2 /Users/izazfalih/AndroidStudioProjects/mygempa/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
-com.example.gempaku.app-packageDebugResources-3 /Users/izazfalih/AndroidStudioProjects/mygempa/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
-com.example.gempaku.app-debug-4 /Users/izazfalih/AndroidStudioProjects/mygempa/app/build/intermediates/merged_res/debug/mergeDebugResources
-com.example.gempaku.app-debug-5 /Users/izazfalih/AndroidStudioProjects/mygempa/app/src/debug/res
-com.example.gempaku.app-main-6 /Users/izazfalih/AndroidStudioProjects/mygempa/app/src/main/res
-gradleHome-0 /Users/izazfalih/.gradle

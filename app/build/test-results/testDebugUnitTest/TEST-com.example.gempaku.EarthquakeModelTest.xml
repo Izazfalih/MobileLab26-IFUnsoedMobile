@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.example.gempaku.EarthquakeModelTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-06T18:27:25.325Z" hostname="Izaz-Falih-MacBook-Pro" time="0.038">
-  <properties/>
-  <testcase name="testLocalSearchFilteringByWilayah" classname="com.example.gempaku.EarthquakeModelTest" time="0.014"/>
-  <testcase name="testBmkgJsonParsing" classname="com.example.gempaku.EarthquakeModelTest" time="0.02"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
