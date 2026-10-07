@@ -126,5 +126,5 @@ File APK siap pasang (*debug build*) tersedia di repositori:
 
 ## Video Penjelasan Kode
 
-- **Link Video**: *[Masukkan Link YouTube Video Anda di Sini]*  
-  *(Video penjelasan kode fokus membahas arsitektur MVVM, Retrofit, StateFlow, dan Composable)*
+- **Link Video**: [https://youtu.be/knR9wc4nsz0](https://youtu.be/knR9wc4nsz0)  
+  *(Video penjelasan kode berfokus membahas arsitektur MVVM, Retrofit, StateFlow, dan Composable)*
