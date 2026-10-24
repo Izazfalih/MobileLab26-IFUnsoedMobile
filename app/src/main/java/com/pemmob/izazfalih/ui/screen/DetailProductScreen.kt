@@ -1,7 +1,6 @@
 package com.pemmob.izazfalih.ui.screen
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,10 +24,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -37,47 +35,79 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.pemmob.izazfalih.R
-import com.pemmob.izazfalih.data.dummy.DummyData
 import com.pemmob.izazfalih.data.model.Product
-import com.pemmob.izazfalih.ui.theme.JualanTheme
-import kotlinx.coroutines.delay
+import com.pemmob.izazfalih.ui.viewmodel.ProductUiState
+import com.pemmob.izazfalih.ui.viewmodel.ProductViewModel
+import com.pemmob.izazfalih.util.JualanConstants.BASE_URL
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailProductScreen(productId: Int, navController: NavController?) {
-    val context = LocalContext.current
-    var isLoading by remember { mutableStateOf(true) }
-    var product by remember { mutableStateOf<Product?>(null) }
+fun DetailProductScreen(
+    productId: Int,
+    navController: NavController?,
+    viewModel: ProductViewModel
+) {
+    val uiState by viewModel.uiState.collectAsState()
     var quantity by rememberSaveable { mutableStateOf(1) }
+    val context = LocalContext.current
 
-    LaunchedEffect(key1 = productId) {
-        isLoading = true
-        delay(timeMillis = 1000) // Simulasi loading server lambat
-        product = DummyData.products.find { it.id == productId }
-        isLoading = false
-    }
-
-    StatelessDetailProduct(
-        product = product,
-        isLoading = isLoading,
-        quantity = quantity,
-        onQuantityChange = { quantity = it },
-        onBackClick = { navController?.popBackStack() },
-        onAddToCartClick = {
-            Toast.makeText(context, "Ditambahkan: $quantity", Toast.LENGTH_SHORT).show()
+    when (val state = uiState) {
+        is ProductUiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
         }
-    )
+
+        is ProductUiState.Error -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Error: ${state.message}",
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        }
+
+        is ProductUiState.Success -> {
+            val product = state.products.find { it.id == productId }
+
+            if (product == null) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Produk tidak ditemukan.")
+                }
+            } else {
+                StatelessDetailProduct(
+                    product = product,
+                    quantity = quantity,
+                    onQuantityChange = { newQuantity ->
+                        quantity = newQuantity
+                    },
+                    onBackClick = { navController?.popBackStack() },
+                    onAddToCartClick = {
+                        Toast.makeText(context, "Berhasil menambah $quantity", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatelessDetailProduct(
     product: Product?,
-    isLoading: Boolean,
     quantity: Int,
     onQuantityChange: (Int) -> Unit,
     onBackClick: () -> Unit,
@@ -103,31 +133,31 @@ fun StatelessDetailProduct(
             )
         }
     ) { paddingValues ->
-        if (isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        } else if (product != null) {
+        if (product != null) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
                     .verticalScroll(state = rememberScrollState())
             ) {
-                val imageRes = if (product.img == "dummy_product") R.drawable.dummy_product else R.drawable.dummy_product
-                Image(
-                    painter = painterResource(id = imageRes),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(250.dp),
-                    contentScale = ContentScale.Fit
-                )
+                val imageModel: Any = if (product.img == "dummy_product") {
+                    R.drawable.dummy_product
+                } else {
+                    "${BASE_URL}img/${product.img}"
+                }
+
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    AsyncImage(
+                        model = imageModel,
+                        contentDescription = product.name,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(250.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                }
 
                 Column(modifier = Modifier.padding(all = 16.dp)) {
                     Text(
@@ -190,20 +220,5 @@ fun StatelessDetailProduct(
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DetailProductScreenPreview() {
-    JualanTheme {
-        StatelessDetailProduct(
-            product = DummyData.products[0],
-            isLoading = false,
-            quantity = 1,
-            onQuantityChange = {},
-            onBackClick = {},
-            onAddToCartClick = {}
-        )
     }
 }

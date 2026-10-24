@@ -166,3 +166,52 @@ Mengonfigurasi rute navigasi aplikasi:
 - `"daftar_produk"`: Halaman utama katalog produk.
 - `"detail/{productId}"`: Halaman rincian produk berdasarkan ID yang dikirim.
 - `"hubungi_kami"`: Halaman formulir layanan bantuan & kontak.
+
+---
+
+# Pertemuan 5
+## Networking & Architecture
+
+### Deskripsi
+Pada pertemuan kelima dipelajari konsep lanjutan dari Jetpack Compose terkait arsitektur perangkat lunak Android modern (MVVM), pemanggilan API RESTful menggunakan Retrofit & Gson Converter, pemuatan gambar asinkron dari internet menggunakan Coil, pengelolaan status jaringan reaktif menggunakan `StateFlow` dan Sealed Interface (`UI State Pattern`), serta penyesuaian navigasi antar layar menggunakan ViewModel bersama.
+
+### Materi
+- Arsitektur MVVM (Model-View-ViewModel)
+- Konsumsi RESTful API menggunakan Retrofit & Gson Converter
+- Pengelolaan UI State secara reaktif menggunakan Kotlin Coroutines & `StateFlow`
+- Pemuatan Gambar dari Internet (Remote Image Loading) menggunakan Coil (`AsyncImage`)
+- Pengorganisasian Kode (Package `util`, `network`, `ui.viewmodel`)
+- Penghapusan Data Tiruan (Dummy Data) dan beralih ke Data Real-time dari API
+- Navigasi Terintegrasi dengan Shared ViewModel di `HomeActivity`
+- Penambahan Izin Akses Jaringan (`android.permission.INTERNET`) di `AndroidManifest.xml`
+
+### Implementasi
+
+#### 1. Konfigurasi Dependensi & Permission
+- Menambahkan library Retrofit (`3.0.0`), Gson Converter (`3.0.0`), Coil Compose (`2.6.0`), dan Lifecycle ViewModel Compose (`2.8.7`) pada `libs.versions.toml` dan `build.gradle.kts`.
+- Menambahkan izin akses internet pada `AndroidManifest.xml`:
+  ```xml
+  <uses-permission android:name="android.permission.INTERNET" />
+  ```
+
+#### 2. Package Util & Network
+- **`JualanConstants.kt`**: Menyimpan konfigurasi konstan `BASE_URL = "https://pemmob-if.web.app/"`.
+- **`ApiInterface.kt`**: Mendefinisikan antarmuka kontrak pemanggilan API (`getCategories()` dan `getProducts()`) serta singleton `ApiClient` menggunakan `Retrofit.Builder()` dan `GsonConverterFactory`.
+
+#### 3. Arsitektur MVVM & UI State (`ProductViewModel.kt`)
+- **`ProductUiState`**: Sealed interface yang merepresentasikan tiga kemungkinan status UI:
+  - `Loading`: Menampilkan indikator progress berputar.
+  - `Success`: Membawa daftar `categories` dan `products` yang telah dipetakan secara otomatis dengan kategorinya masing-masing.
+  - `Error`: Membawa pesan kegagalan jika terjadi kendala jaringan atau server.
+- **`ProductViewModel`**: Menggunakan `MutableStateFlow` yang dienkapsulasi dan `viewModelScope` untuk memanggil API secara asinkron tanpa memblokir UI thread.
+
+#### 4. Integrasi Layar & Remote Image Loading
+- **`DaftarProductScreen.kt`**:
+  - Mengonsumsi `uiState` dari `ProductViewModel` menggunakan `collectAsState()`.
+  - Menggunakan Coil `AsyncImage` pada `ProductItemCard` untuk menampilkan gambar dari endpoint server (`${BASE_URL}img/${product.img}`) dengan fallback ke gambar cadangan lokal.
+- **`DetailProductScreen.kt`**:
+  - Mengambil data produk langsung dari status `ProductUiState.Success`.
+  - Menggunakan `AsyncImage` untuk menampilkan foto produk resolusi penuh dari server secara dinamis.
+
+#### 5. Navigasi Terpadu (`HomeActivity.kt`)
+- Menginjeksi instance tunggal `ProductViewModel` menggunakan fungsi `viewModel()` ke dalam rute `DaftarProdukScreen` dan `DetailProductScreen`, sehingga data API dapat digunakan bersama tanpa perlu melakukan fetch ulang.
