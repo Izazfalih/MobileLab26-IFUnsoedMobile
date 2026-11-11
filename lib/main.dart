@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:router_flutter/login_page.dart';
+import 'package:router_flutter/ui/login_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: 'Flutter Menu',
+      title: 'Toko Kita',
       debugShowCheckedModeBanner: false,
       home: LoginPage(),
     );

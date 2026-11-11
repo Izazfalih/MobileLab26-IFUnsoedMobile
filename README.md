@@ -9,6 +9,7 @@ Repository ini berisi implementasi tugas dan materi Praktikum Pemrograman Mobile
    - [Modul 1: Bahasa Pemrograman Dart](#modul-1-bahasa-pemrograman-dart)
    - [Modul 2: Pengenalan & Desain Framework Flutter (Widget & Layout)](#modul-2-pengenalan--desain-framework-flutter-widget--layout)
    - [Modul 3: Routes, Side Menu, Login & Local Storage](#modul-3-routes-side-menu-login--local-storage)
+   - [Modul 4: Operasi CRUD dengan API CodeIgniter 4 & Flutter](#modul-4-operasi-crud-dengan-api-codeigniter-4--flutter)
 2. [Alur Navigasi & Integrasi Aplikasi](#-alur-navigasi--integrasi-aplikasi)
 3. [Struktur Direktori Proyek](#-struktur-direktori-proyek)
 4. [Persyaratan & Instalasi](#-persyaratan--instalasi)
@@ -92,6 +93,30 @@ Modul 3 membahas mekanisme autentikasi sederhana, penyimpanan preferensi lokal (
 
 ---
 
+### Modul 4: Operasi CRUD dengan API CodeIgniter 4 & Flutter
+
+Modul 4 mengintegrasikan aplikasi mobile Flutter dengan backend RESTful API berbasis CodeIgniter 4 dan database MySQL (Docker).
+
+#### Pokok Bahasan:
+1. **Model Data Flutter (`lib/model/`)**:
+   - `login.dart`: Serialisasi dan deserialisasi data respon login (`token`, `userID`, `userEmail`).
+   - `registrasi.dart`: Model respon pendaftaran akun (`code`, `status`, `data`).
+   - `produk.dart`: Model entitas produk (`id`, `kode_produk`, `nama_produk`, `harga`).
+2. **Halaman Autentikasi (`lib/ui/`)**:
+   - `login_page.dart`: Antarmuka login dengan navigasi ke registrasi dan redirect ke katalog produk.
+   - `registrasi_page.dart`: Form pendaftaran dengan validasi input (nama, email regex, panjang password, konfirmasi password).
+3. **Halaman CRUD Produk (`lib/ui/`)**:
+   - `produk_page.dart`: Tampilan daftar produk interaktif (`ItemProduk`) dengan menu Drawer logout dan aksi tambah produk (+).
+   - `produk_form.dart`: Formulir dinamis mode ganda (Tambah Produk atau Ubah Produk).
+   - `produk_detail.dart`: Rincian spesifikasi produk dengan aksi **EDIT** dan konfirmasi **DELETE** via `AlertDialog`.
+4. **Backend REST API (CodeIgniter 4 - `toko-api`)**:
+   - Base API Resource: `RestfulController` dengan format standar JSON `{code, status, data}`.
+   - Endpoint Auth: `POST /registrasi` (enkripsi password hash) dan `POST /login` (verifikasi password & random auth token).
+   - Endpoint CRUD: `POST /produk`, `GET /produk`, `GET /produk/{id}`, `PUT /produk/{id}`, `DELETE /produk/{id}`.
+   - Database MySQL (`toko_api` di Docker port `3306`) dengan tabel `member`, `member_token`, dan `produk`.
+
+---
+
 ## 🧭 Alur Navigasi & Integrasi Aplikasi
 
 ```
@@ -146,17 +171,23 @@ Modul 3 membahas mekanisme autentikasi sederhana, penyimpanan preferensi lokal (
 │   └── modul1_dart.dart        # Script runnable seluruh materi Modul 1 (Dart)
 ├── lib/
 │   ├── main.dart               # Entry point aplikasi Flutter (menuju LoginPage)
-│   ├── login_page.dart         # Autentikasi, form login, & SharedPreferences
-│   ├── home_page.dart          # Halaman beranda dengan username dinamis & drawer
-│   ├── sidemenu.dart           # Drawer navigasi terintegrasi
-│   ├── about_page.dart         # Halaman About
+│   ├── login_page.dart         # Autentikasi, form login, & SharedPreferences (Modul 3)
+│   ├── home_page.dart          # Halaman beranda dengan username dinamis & drawer (Modul 3)
+│   ├── sidemenu.dart           # Drawer navigasi terintegrasi (Modul 3)
+│   ├── about_page.dart         # Halaman About (Modul 3)
 │   ├── hello_world.dart        # Widget dasar Hello World (Modul 2)
 │   ├── column_widget.dart      # Widget Column (Modul 2)
 │   ├── row_widget.dart         # Widget Row (Modul 2)
+│   ├── model/
+│   │   ├── login.dart          # Model autentikasi login (Modul 4)
+│   │   ├── registrasi.dart     # Model respon registrasi (Modul 4)
+│   │   └── produk.dart         # Model entitas produk (Modul 4)
 │   └── ui/
-│       ├── produk_form.dart    # Formulir input data produk (Modul 2)
-│       ├── produk_detail.dart  # Tampilan detail produk hasil input (Modul 2)
-│       └── produk_page.dart    # ListView kartu produk (Modul 2)
+│       ├── login_page.dart     # Halaman login Tokokita (Modul 4)
+│       ├── registrasi_page.dart# Halaman registrasi Tokokita (Modul 4)
+│       ├── produk_form.dart    # Form Tambah / Ubah produk (Modul 4)
+│       ├── produk_detail.dart  # Rincian produk & aksi Edit / Hapus (Modul 4)
+│       └── produk_page.dart    # ListView kartu produk (Modul 4)
 └── test/
     └── widget_test.dart        # Pengujian otomatis widget aplikasi
 ```
